@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80">
+
+  <defs>
+    <!-- shape mũi tên (gốc tại 0,0) -->
+    <polygon id="arrowShapeFlow"
+      points="0,20 40,20 40,10 60,30 40,50 40,40 0,40" />
+
+    <!-- clip vùng hiển thị -->
+    <clipPath id="clipFlow">
+      <rect x="0" y="0" width="300" height="80"/>
+    </clipPath>
+  </defs>
+
+  <style>
+    .flowAnim {
+      fill: #FFD700;
+      animation: flowMove 2.5s linear infinite;
+    }
+
+    @keyframes flowMove {
+      from { transform: translateX(-300px); }
+      to   { transform: translateX(0px); }
+    }
+  </style>
+
+  <!-- group mũi tên -->
+  <g class="flowAnim" clip-path="url(#clipFlow)">
+    <g transform="translate(0,10)">
+      <use href="#arrowShapeFlow"/>
+    </g>
+    <g transform="translate(100,10)">
+      <use href="#arrowShapeFlow"/>
+    </g>
+    <g transform="translate(200,10)">
+      <use href="#arrowShapeFlow"/>
+    </g>
+
+    <!-- copy để loop -->
+    <g transform="translate(300,10)">
+      <use href="#arrowShapeFlow"/>
+    </g>
+    <g transform="translate(400,10)">
+      <use href="#arrowShapeFlow"/>
+    </g>
+    <g transform="translate(500,10)">
+      <use href="#arrowShapeFlow"/>
+    </g>
+  </g>
+
+</svg>
