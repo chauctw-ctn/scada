@@ -44,11 +44,13 @@ function flushTelemetryCallbacks(k, value) {
 
 /* ================= CONFIG ================= */
 
-const SVG_URL = "https://raw.githubusercontent.com/chauctw-ctn/scada/9482bd359ab42a9e6f3fdddc9dd3b8bf492b32d7/Main_NMNCT1_2201.svg";
+const SVG_URL = "https://raw.githubusercontent.com/chauctw-ctn/scada/9c0030f41cc3a133bed761720e86d315a26f4b60/Main_NMNCT1_2201.svg";
 
 const MAP_ICON = [
     //{ key: "running", svg: "g1", source: "shared" }
-    { key: "c1_nt_hz_p1", svg: "st_c1_nt_hz_p1", source: "telemetry", deviceName: "CTW_TAG" }
+    { key: "c1_nt_hz_p1", svg: "st_c1_nt_hz_p1", source: "telemetry", deviceName: "CTW_TAG" },
+    { key: "c1_nt_hz_p2", svg: "st_c1_nt_hz_p2", source: "telemetry", deviceName: "CTW_TAG" },
+    { key: "c1_nt_hz_p3", svg: "st_c1_nt_hz_p3", source: "telemetry", deviceName: "CTW_TAG" }
     
 ];
 
@@ -81,6 +83,12 @@ const MAP_TEXT = [
     { key: "c2_nt_hz_p1", svg: "c2_nt_hz_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
     { key: "c2_nt_hz_p2", svg: "c2_nt_hz_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
     { key: "c2_nt_hz_p3", svg: "c2_nt_hz_p3", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c2_ns_hz_p1", svg: "c2_ns_hz_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c2_ns_hz_p2", svg: "c2_ns_hz_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c2_ns_hz_p3", svg: "c2_ns_hz_p3", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c2_ns_ampe_p1", svg: "c2_ns_ampe_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c2_ns_ampe_p2", svg: "c2_ns_ampe_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c2_ns_ampe_p3", svg: "c2_ns_ampe_p3", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
     { key: "c2_nt_ampe_p1", svg: "c2_nt_ampe_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
     { key: "c2_nt_ampe_p2", svg: "c2_nt_ampe_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
     { key: "c2_nt_ampe_p3", svg: "c2_nt_ampe_p3", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
@@ -108,6 +116,7 @@ const MAP_TEXT = [
     { key: "c1_pac_Lh", svg: "c1_pac_Lh", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
     { key: "c2_pac_Lh", svg: "c2_pac_Lh", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
     { key: "c1_clo_Grh", svg: "c1_clo_Grh", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c2_clo_Grh", svg: "c2_clo_Grh", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
     { key: "c1_ntu_sl", svg: "c1_ntu_sl", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
     { key: "c2_ntu_sl", svg: "c2_ntu_sl", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
     { key: "c1_ns_bar", svg: "c1_ns_bar", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
@@ -618,38 +627,83 @@ function updateText(svgId, value) {
 /**
  * Áp dụng style status (color + glow) vào SVG element
  */
-function applyStatusToSvg(svgId, running) {
-    if (!svgId) return;
+function applyStatusToSvg(svgId, key, deviceName) {
+    if (!svgId || !key) return;
 
-    const color = running ? "lime" : "red";
-    const glow = running
-        ? "drop-shadow(0 0 8px lime)"
-        : "drop-shadow(0 0 10px red)";
+    const val = getTelemetryValue(key, deviceName);
+    
+    if (val !== null && val !== undefined) {
+        logTelemetryValue(key, val, "(from cache)");
+        const running = toBooleanStatus(val);
+        
+        const color = running ? "lime" : "red";
+        const glow = running
+            ? "drop-shadow(0 0 8px lime)"
+            : "drop-shadow(0 0 10px red)";
 
-    const styleId = "style-" + svgId;
-    let styleTag = document.getElementById(styleId);
+        const styleId = "style-" + svgId;
+        let styleTag = document.getElementById(styleId);
 
-    if (!styleTag) {
-        styleTag = document.createElement("style");
-        styleTag.id = styleId;
-        document.head.appendChild(styleTag);
+        if (!styleTag) {
+            styleTag = document.createElement("style");
+            styleTag.id = styleId;
+            document.head.appendChild(styleTag);
+        }
+
+        styleTag.innerHTML = `
+            #${svgId} path,
+            #${svgId} circle,
+            #${svgId} rect,
+            #${svgId} line,
+            #${svgId} polygon {
+                stroke: ${color} !important;
+                stroke-width: 2px !important;
+                transition: stroke 0.3s ease, filter 0.3s ease;
+            }
+
+            #${svgId} {
+                filter: ${glow};
+            }
+        `;
+    } else {
+        // Fallback: gọi API lấy telemetry latest
+        getTelemetryLatestForDevice(deviceName, key, v => {
+            if (v !== null && v !== undefined) {
+                logTelemetryValue(key, v, deviceName ? `(API/service, device=${deviceName})` : "(API/service)");
+                const running = toBooleanStatus(v);
+                
+                const color = running ? "lime" : "red";
+                const glow = running
+                    ? "drop-shadow(0 0 8px lime)"
+                    : "drop-shadow(0 0 10px red)";
+
+                const styleId = "style-" + svgId;
+                let styleTag = document.getElementById(styleId);
+
+                if (!styleTag) {
+                    styleTag = document.createElement("style");
+                    styleTag.id = styleId;
+                    document.head.appendChild(styleTag);
+                }
+
+                styleTag.innerHTML = `
+                    #${svgId} path,
+                    #${svgId} circle,
+                    #${svgId} rect,
+                    #${svgId} line,
+                    #${svgId} polygon {
+                        stroke: ${color} !important;
+                        stroke-width: 2px !important;
+                        transition: stroke 0.3s ease, filter 0.3s ease;
+                    }
+
+                    #${svgId} {
+                        filter: ${glow};
+                    }
+                `;
+            }
+        });
     }
-
-    styleTag.innerHTML = `
-        #${svgId} path,
-        #${svgId} circle,
-        #${svgId} rect,
-        #${svgId} line,
-        #${svgId} polygon {
-            stroke: ${color} !important;
-            stroke-width: 2px !important;
-            transition: stroke 0.3s ease, filter 0.3s ease;
-        }
-
-        #${svgId} {
-            filter: ${glow};
-        }
-    `;
 }
 
 
@@ -665,7 +719,18 @@ function toBooleanStatus(value) {
     if (typeof value === 'number') return value !== 0;
     if (typeof value === 'string') {
         const lower = value.toLowerCase().trim();
-        return lower === "true" || lower === "1" || lower === "on" || lower === "yes";
+        // Check for boolean strings first
+        if (lower === "true" || lower === "on" || lower === "yes") return true;
+        if (lower === "false" || lower === "off" || lower === "no") return false;
+        
+        // Try to parse as number
+        const num = parseFloat(lower);
+        if (!isNaN(num)) {
+            return num !== 0;
+        }
+        
+        // Default for non-empty strings
+        return lower.length > 0;
     }
 
     return false;
@@ -680,27 +745,42 @@ function updateIcon(item) {
 
     if (item.source === "telemetry") {
         const deviceName = item.deviceName || item.device;
-        const val = getTelemetryValue(item.key, deviceName);
-        if (val !== null && val !== undefined) {
-            logTelemetryValue(item.key, val, "(from cache)");
-            const running = toBooleanStatus(val);
-            applyStatusToSvg(item.svg, running);
-        } else {
-            // Fallback: gọi API lấy telemetry latest (service hoặc REST)
-            getTelemetryLatestForDevice(deviceName, item.key, v => {
-                if (v !== null && v !== undefined) {
-                    logTelemetryValue(item.key, v, deviceName ? `(API/service, device=${deviceName})` : "(API/service)");
-                    const running = toBooleanStatus(v);
-                    applyStatusToSvg(item.svg, running);
-                } else { applyStatusToSvg(item.svg, false); }
-            });
-        }
+        applyStatusToSvg(item.svg, item.key, deviceName);
     }
     else if (item.source === "shared") {
         getSharedAttr(item.key, val => {
             logAttributeValue(item.key, val, "(shared)");
             const running = toBooleanStatus(val);
-            applyStatusToSvg(item.svg, running);
+            
+            const color = running ? "lime" : "red";
+            const glow = running
+                ? "drop-shadow(0 0 8px lime)"
+                : "drop-shadow(0 0 10px red)";
+
+            const styleId = "style-" + item.svg;
+            let styleTag = document.getElementById(styleId);
+
+            if (!styleTag) {
+                styleTag = document.createElement("style");
+                styleTag.id = styleId;
+                document.head.appendChild(styleTag);
+            }
+
+            styleTag.innerHTML = `
+                #${item.svg} path,
+                #${item.svg} circle,
+                #${item.svg} rect,
+                #${item.svg} line,
+                #${item.svg} polygon {
+                    stroke: ${color} !important;
+                    stroke-width: 2px !important;
+                    transition: stroke 0.3s ease, filter 0.3s ease;
+                }
+
+                #${item.svg} {
+                    filter: ${glow};
+                }
+            `;
         });
     }
 }
