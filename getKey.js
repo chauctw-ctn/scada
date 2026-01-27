@@ -44,16 +44,77 @@ function flushTelemetryCallbacks(k, value) {
 
 /* ================= CONFIG ================= */
 
-const SVG_URL = "https://raw.githubusercontent.com/chauctw-ctn/scada/ae4d803a14c39dee7132b570230ddd768ee0d216/Main_NMNCT1_2201.svg";
+const SVG_URL = "https://raw.githubusercontent.com/chauctw-ctn/scada/9482bd359ab42a9e6f3fdddc9dd3b8bf492b32d7/Main_NMNCT1_2201.svg";
 
 const MAP_ICON = [
-    { key: "running", svg: "g1", source: "shared" },
-    { key: "BONGVANG_Color", svg: "text25-6", source: "telemetry", deviceName: "NMNBV" }
+    //{ key: "running", svg: "g1", source: "shared" }
+    { key: "c1_nt_hz_p1", svg: "st_c1_nt_hz_p1", source: "telemetry", deviceName: "CTW_TAG" }
+    
 ];
 
 const MAP_TEXT = [
-    { key: "BONGVANG_Color", svg: "text25", source: "telemetry", deviceName: "NMNBV", format: v => Number(v).toFixed(0) },
-    { key: "Flow_NS", svg: "text25-6", source: "telemetry", deviceName: "NMNBV", format: v => Number(v).toFixed(0) }
+    
+    { key: "CTN_NUOCSACH_CUM1__pH", svg: "c1_ns_pH", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "CTN_NUOCSACH_CUM1__Clo", svg: "c1_ns_mgL", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "CTN_NUOCSACH_CUM1__Tur", svg: "c1_ns_ntu", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "CTN_NUOCSACH_CUM2__pH", svg: "c2_ns_pH", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "CTN_NUOCSACH_CUM2__Clo", svg: "c2_ns_mgL", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "CTN_NUOCSACH_CUM2__Tur", svg: "c2_ns_ntu", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    
+    
+    { key: "c1_nt_hz_p1", svg: "c1_nt_hz_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c1_nt_hz_p2", svg: "c1_nt_hz_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c1_nt_hz_p3", svg: "c1_nt_hz_p3", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c1_nt_ampe_p1", svg: "c1_nt_ampe_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c1_nt_ampe_p2", svg: "c1_nt_ampe_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c1_nt_ampe_p3", svg: "c1_nt_ampe_p3", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c1_nt_flow", svg: "c1_nt_flow", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c1_nt_ntu", svg: "c1_nt_ntu", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    
+    { key: "c1_ns_hz_p1", svg: "c1_ns_hz_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c1_ns_hz_p2", svg: "c1_ns_hz_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c1_ns_hz_p3", svg: "c1_ns_hz_p3", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c1_ns_ampe_p1", svg: "c1_ns_ampe_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c1_ns_ampe_p2", svg: "c1_ns_ampe_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c1_ns_ampe_p3", svg: "c1_ns_ampe_p3", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    
+    { key: "c2_nt_hz_p1", svg: "c2_nt_hz_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c2_nt_hz_p2", svg: "c2_nt_hz_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c2_nt_hz_p3", svg: "c2_nt_hz_p3", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c2_nt_ampe_p1", svg: "c2_nt_ampe_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c2_nt_ampe_p2", svg: "c2_nt_ampe_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c2_nt_ampe_p3", svg: "c2_nt_ampe_p3", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c2_nt_flow", svg: "c2_nt_flow", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    
+    { key: "c34_nt_hz_p1", svg: "c34_nt_hz_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c34_nt_hz_p2", svg: "c34_nt_hz_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c34_nt_ampe_p1", svg: "c34_nt_ampe_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c34_nt_ampe_p2", svg: "c34_nt_ampe_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c34_nt_flow", svg: "c34_nt_flow", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c34_nt_ntu", svg: "c34_nt_ntu", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c34_nt_pH", svg: "c34_nt_pH", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    
+    { key: "c34_ns_hz_p1", svg: "c34_ns_hz_p1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c34_ns_hz_p2", svg: "c34_ns_hz_p2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c34_ns_hz_p3", svg: "c34_ns_hz_p3", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c34_ns_hz_p4", svg: "c34_ns_hz_p4", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    
+    { key: "c1_pac1", svg: "c1_pac1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c1_pac2", svg: "c1_pac2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c2_pac1", svg: "c2_pac1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c2_pac2", svg: "c2_pac2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c12_kg_clo1", svg: "c12_kg_clo1", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c12_kg_clo2", svg: "c12_kg_clo2", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c1_pac_Lh", svg: "c1_pac_Lh", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c2_pac_Lh", svg: "c2_pac_Lh", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c1_clo_Grh", svg: "c1_clo_Grh", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) },
+    { key: "c1_ntu_sl", svg: "c1_ntu_sl", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c2_ntu_sl", svg: "c2_ntu_sl", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    { key: "c1_ns_bar", svg: "c1_ns_bar", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(2) },
+    
+    
+    { key: "c1_ns_flow", svg: "c1_ns_flow", source: "telemetry", deviceName: "CTW_TAG", format: v => Number(v).toFixed(0) }
+    
 ];
 
 
@@ -86,10 +147,18 @@ self.onDestroy = function () { if (sharedTimer) clearInterval(sharedTimer); };
  * Lấy giá trị telemetry từ ctx.data - Phiên bản cải thiện
  * Hỗ trợ nhiều cách lấy dữ liệu khác nhau
  */
-function getTelemetryValue(key) {
+function getTelemetryValue(key, deviceName) {
     if (!key) { return null; }
 
     const wanted = normalizeKey(key);
+    
+    // If deviceName provided, use same cache key format as getTelemetryLatestForDevice
+    if (deviceName) {
+        const cacheKey = normalizeKey(deviceName) + "::" + wanted;
+        if (telemetryCache.has(cacheKey)) { return telemetryCache.get(cacheKey); }
+        return null;
+    }
+    
     // Single source of truth: use cached latest fetched via service/REST per entity
     const entity = getEntityId();
     const entityKey = entity ? normalizeKey(entityIdToString(entity)) : "";
@@ -536,7 +605,7 @@ function updateText(svgId, value) {
     const txt = (value !== null && value !== undefined) ? String(value) : "--";
 
     // Căn giữa text
-    el.setAttribute("text-anchor", "middle");    
+    el.setAttribute("text-anchor", "middle");
     
     const tspan = el.querySelector("tspan");
     if (tspan) {
@@ -610,14 +679,14 @@ function updateIcon(item) {
     if (!item || !item.key || !item.svg) return;
 
     if (item.source === "telemetry") {
-        const val = getTelemetryValue(item.key);
+        const deviceName = item.deviceName || item.device;
+        const val = getTelemetryValue(item.key, deviceName);
         if (val !== null && val !== undefined) {
             logTelemetryValue(item.key, val, "(from cache)");
             const running = toBooleanStatus(val);
             applyStatusToSvg(item.svg, running);
         } else {
             // Fallback: gọi API lấy telemetry latest (service hoặc REST)
-            const deviceName = item.deviceName || item.device;
             getTelemetryLatestForDevice(deviceName, item.key, v => {
                 if (v !== null && v !== undefined) {
                     logTelemetryValue(item.key, v, deviceName ? `(API/service, device=${deviceName})` : "(API/service)");
@@ -654,7 +723,7 @@ self.onDataUpdated = function () {
     if (!svgReady) return;
 
     const now = Date.now();
-    if (now - lastUpdateTime < 300) return;  // Debounce: 300ms
+    if (now - lastUpdateTime < 30000) return;  // Debounce: 300ms
     lastUpdateTime = now;
     MAP_ICON.forEach((item, i) => {
         if (item.source === "telemetry") { updateIcon(item); }
@@ -662,14 +731,14 @@ self.onDataUpdated = function () {
     MAP_TEXT.forEach((item, i) => {
         if (!item || !item.key) return;
 
-        const val = getTelemetryValue(item.key);
+        const deviceName = item.deviceName || item.device;
+        const val = getTelemetryValue(item.key, deviceName);
         if (val !== null && val !== undefined) {
             logTelemetryValue(item.key, val, "(from cache)");
             const formatted = item.format ? item.format(val) : val;
             updateText(item.svg, formatted);
         } else {
             // Fallback: gọi service/REST lấy telemetry latest theo device (nếu có)
-            const deviceName = item.deviceName || item.device;
             getTelemetryLatestForDevice(deviceName, item.key, v => {
                 if (v !== null && v !== undefined) {
                     logTelemetryValue(item.key, v, deviceName ? `(API/service, device=${deviceName})` : "(API/service)");
