@@ -706,16 +706,38 @@ function updateText(svgId, value) {
 }
 
 /**
- * Áp dụng style status (color + glow) vào SVG element
+ * Áp dụng style status (color + glow) vào SVG element với điều kiện mở rộng
+ * @param {string} svgId - ID của SVG element
+ * @param {string} key - Key chính (Hz/trạng thái chạy)
+ * @param {string} key1 - Key điều kiện 1 (optional, ví dụ: giá trị thực tế)
+ * @param {string} key2 - Key điều kiện 2 (optional, ví dụ: giá trị setpoint)
+ * @param {string} deviceName - Tên thiết bị
+ * 
+ * Logic:
+ * - Nếu có key1 và key2: Icon XANH nếu key≠0 VÀ key1>=key2, Icon ĐỎ nếu key=0 HOẶC key1<key2
+ * - Nếu không có key1/key2: Icon XANH nếu key≠0, Icon ĐỎ nếu key=0
  */
-function applyStatusToSvg(svgId, key, deviceName) {
+function applyStatusToSvg(svgId, key, key1, key2, deviceName) {
     if (!svgId || !key) return;
 
     const val = getTelemetryValue(key, deviceName);
+    const val1 = key1 ? getTelemetryValue(key1, deviceName) : null;
+    const val2 = key2 ? getTelemetryValue(key2, deviceName) : null;
     
     if (val !== null && val !== undefined) {
         logTelemetryValue(key, val, "(from cache)");
-        const running = toBooleanStatus(val);
+        
+        let running = false;
+        
+        // Logic với điều kiện mở rộng
+        if (key1 && key2 && val1 !== null && val1 !== undefined && val2 !== null && val2 !== undefined) {
+            const keyRunning = toBooleanStatus(val);
+            const conditionMet = Number(val1) >= Number(val2);
+            running = keyRunning && conditionMet;
+            console.log(`🔍 [${svgId}] ${key}=${val} (${keyRunning ? 'ON' : 'OFF'}), ${key1}=${val1} >= ${key2}=${val2} (${conditionMet ? 'YES' : 'NO'}) → ${running ? '🟢' : '🔴'}`);
+        } else {
+            running = toBooleanStatus(val);
+        }
         
         const color = running ? "lime" : "red";
         const glow = running
@@ -748,41 +770,69 @@ function applyStatusToSvg(svgId, key, deviceName) {
         `;
     } else {
         // Fallback: gọi API lấy telemetry latest
-        getTelemetryLatestForDevice(deviceName, key, v => {
-            if (v !== null && v !== undefined) {
-                logTelemetryValue(key, v, deviceName ? `(API/service, device=${deviceName})` : "(API/service)");
-                const running = toBooleanStatus(v);
+        const keysToFetch = [key];
+        if (key1) keysToFetch.push(key1);
+        if (key2) keysToFetch.push(key2);
+        
+        let fetchedValues = {};
+        let fetchCount = 0;
+        
+        keysToFetch.forEach(k => {
+            getTelemetryLatestForDevice(deviceName, k, v => {
+                fetchedValues[k] = v;
+                fetchCount++;
                 
-                const color = running ? "lime" : "red";
-                const glow = running
-                    ? "drop-shadow(0 0 8px lime)"
-                    : "drop-shadow(0 0 10px red)";
+                if (fetchCount === keysToFetch.length) {
+                    const mainVal = fetchedValues[key];
+                    const val1Fetched = key1 ? fetchedValues[key1] : null;
+                    const val2Fetched = key2 ? fetchedValues[key2] : null;
+                    
+                    if (mainVal !== null && mainVal !== undefined) {
+                        logTelemetryValue(key, mainVal, deviceName ? `(API/service, device=${deviceName})` : "(API/service)");
+                        
+                        let running = false;
+                        
+                        if (key1 && key2 && val1Fetched !== null && val1Fetched !== undefined && val2Fetched !== null && val2Fetched !== undefined) {
+                            const keyRunning = toBooleanStatus(mainVal);
+                            const conditionMet = Number(val1Fetched) >= Number(val2Fetched);
+                            running = keyRunning && conditionMet;
+                            console.log(`🔍 [${svgId}] ${key}=${mainVal} (${keyRunning ? 'ON' : 'OFF'}), ${key1}=${val1Fetched} >= ${key2}=${val2Fetched} (${conditionMet ? 'YES' : 'NO'}) → ${running ? '🟢' : '🔴'}`);
+                        } else {
+                            running = toBooleanStatus(mainVal);
+                        }
+                        
+                        const color = running ? "lime" : "red";
+                        const glow = running
+                            ? "drop-shadow(0 0 8px lime)"
+                            : "drop-shadow(0 0 10px red)";
 
-                const styleId = "style-" + svgId;
-                let styleTag = document.getElementById(styleId);
+                        const styleId = "style-" + svgId;
+                        let styleTag = document.getElementById(styleId);
 
-                if (!styleTag) {
-                    styleTag = document.createElement("style");
-                    styleTag.id = styleId;
-                    document.head.appendChild(styleTag);
+                        if (!styleTag) {
+                            styleTag = document.createElement("style");
+                            styleTag.id = styleId;
+                            document.head.appendChild(styleTag);
+                        }
+
+                        styleTag.innerHTML = `
+                            #${svgId} path,
+                            #${svgId} circle,
+                            #${svgId} rect,
+                            #${svgId} line,
+                            #${svgId} polygon {
+                                stroke: ${color} !important;
+                                stroke-width: 2px !important;
+                                transition: stroke 0.3s ease, filter 0.3s ease;
+                            }
+
+                            #${svgId} {
+                                filter: ${glow};
+                            }
+                        `;
+                    }
                 }
-
-                styleTag.innerHTML = `
-                    #${svgId} path,
-                    #${svgId} circle,
-                    #${svgId} rect,
-                    #${svgId} line,
-                    #${svgId} polygon {
-                        stroke: ${color} !important;
-                        stroke-width: 2px !important;
-                        transition: stroke 0.3s ease, filter 0.3s ease;
-                    }
-
-                    #${svgId} {
-                        filter: ${glow};
-                    }
-                `;
-            }
+            });
         });
     }
 }
@@ -827,7 +877,7 @@ function updateIcon(item) {
     if (item.source === "telemetry") {
         const deviceName = item.deviceName || item.device;
 
-        applyStatusToSvg(item.svg, item.key, deviceName);
+        applyStatusToSvg(item.svg, item.key, item.key1, item.key2, deviceName);
     }
     else if (item.source === "shared") {
         getSharedAttr(item.key, val => {
